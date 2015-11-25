@@ -4,6 +4,7 @@ Determining fakes reviews in "Amazon Fine Foods reviews" database.
 What data will you use?
 
 https://snap.stanford.edu/data/web-FineFoods.html
+
 http://www.scribd.com/doc/285431272/Amazon-Review-Complaint
 
 The reviews of Amazon food products provided by the Stanford Network Analysis Project (SNAP) gives us 568,454 reviews by 256,059 users on 74,258 products between October 1999 to October 2012. Each review contains the product ID, user ID, the name of the user, the helpfulness of the review, the rating given to the product, the time it was posted, the summary of the review, and the actual text of the review. The size of the data file was 116 MB. We’ll manually select the reviews that we believe are fake as the class attribute in a small sample as the training data. The second link contained a list of usernames on a website called Fiverr who post fake reviews on Amazon. We’ll try to match it to Amazon reviewers and use them as fakes.
