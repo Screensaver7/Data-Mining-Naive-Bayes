@@ -1,7 +1,7 @@
 import csv
 import math
 
-def openCSV(filename):
+def openCSV(filename, cols, datatype):
     #I don't if it should handle strings or not
     with open(filename,"r") as csvfile:
         reader = csv.reader(csvfile, delimiter=',', quotechar='|')
@@ -39,8 +39,12 @@ def gaussianPdf(listOfNum,x):
     return (1/(standDev*math.sqrt(2*math.pi)))*math.pow(math.e,-1*math.pow((x-avg),2)/(2*standDev*standDev))
 
 def main():
-    data = openCSV("test.csv")
-    classification = data[len(data)-1]
+
+    #[ ... attributes ..., class label]
+    attribs = [2, 3, 4, 6, 7, 8, 8, 50]
+    #1 is numeral, 0 is nominal
+    atype   = [0, 0, 0, 0, 0, 0, 0, 0]
+    data = openCSV(".\dataset_diabetes\diabetic_data.csv", attribs, atype)
 
     #TESTING PURPOSES
     test = [1,2,3,4]
@@ -51,4 +55,5 @@ def main():
     print(dev)
     print(prob)
 
-main()
+if __name__ == "__main__":
+    main()
