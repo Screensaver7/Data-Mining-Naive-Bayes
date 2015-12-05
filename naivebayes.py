@@ -107,9 +107,14 @@ def main(arg):
         total = sum(prob.values())
         for k in keys:
             prob[k] = prob[k] / total
+<<<<<<< HEAD
         #best match, actual class
         if (max(prob.iteritems(), key=operator.itemgetter(1))[0] == t[cols_count - 1]):
             count+=1
+=======
+        # best match, actual class
+        print max(prob.iteritems(), key=operator.itemgetter(1))[0], t[cols_count - 1]
+>>>>>>> origin/master
 
     print 'Accuracy: %.04f' % (count/float(size))
     
