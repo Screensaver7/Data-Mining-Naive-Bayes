@@ -144,10 +144,11 @@ def main(arg):
                       float(confmat[i][i]+
                             sum(confmat[i])))
     acc = tp/float(size)
-    print ('\navg precision: %0.3f\n' +
+    print ('\nclass labels: %d\n' +
+           'avg precision: %0.3f\n' +
            'avg recall: %0.3f\n' +
-           'accuracy: %0.3f') % (mean(precision),
+           'accuracy: %0.3f') % (len(keys), mean(precision),
                                  mean(recall), acc)
-    
+
 if __name__ == "__main__":
     main(argv[1:])
