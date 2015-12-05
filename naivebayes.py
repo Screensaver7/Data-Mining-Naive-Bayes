@@ -4,7 +4,7 @@
 ## Input: # of folds
 ## Output: Classification errors
 ##
-## Example: python naivebayes.py 10
+## Example: python naivebayes.py dataset.csv 10
 
 import csv
 import math
@@ -21,6 +21,7 @@ def openCSV(filename, k):
     line = list(reader)
     col_count = len(line[0])
     row_count = len(line)
+    size = row_count
     kparts = []
     #3 dimensional array
     #kparts[fold#][attribute][class label]
@@ -53,9 +54,10 @@ def openCSV(filename, k):
     csvfile.close()
     #delete test data in training partition
     del kparts[test]
-    return kparts, testdata
+    return kparts, testdata, row_count
 
 def mean(listOfNum):
+    if (len(listOfNum) == 0): return 0
     return sum(listOfNum)/float(len(listOfNum))
 
 def stddev(listOfNum):
@@ -67,16 +69,16 @@ def gaussianPdf(avg, standDev ,x):
 
 def main(arg):
     seed(datetime.now())
-    data = openCSV("letter-recognition.csv", arg)
+    data = openCSV(arg[0], int(arg[1]))
     test = data[1]
+    size = data[2]
     data = data[0]
     cols_count = len(test[0])
     keys = data[0][0].keys()
-    val = [[] for x in range(len(keys))]
     train = []
     for attribs in range(cols_count - 1):
-        train.append(dict(zip(keys, val)))
-    #add all instances
+        train.append(dict(zip(keys, [[] for x in range(len(keys))])))
+    #combine testing folds
     for parts in data:
         for i in range(cols_count - 1):
             for word in parts[i]:
@@ -88,10 +90,11 @@ def main(arg):
         for key in keys:
             newval = [mean(attrib[key]), stddev(attrib[key])]
             attrib[key] = newval
-
     #test training
+    print train
+    count = 0
     for t in test:
-        prob = dict(zip(keys, val))
+        prob = dict(zip(keys, [[] for x in range(len(keys))]))
         for i in range(cols_count - 1):
             for k in keys:
                 attrib_prob = gaussianPdf(train[i][k][0],
@@ -101,11 +104,16 @@ def main(arg):
                     prob[k] = attrib_prob
                 else:
                     prob[k] = prob[k] * attrib_prob
-
         total = sum(prob.values())
         for k in keys:
             prob[k] = prob[k] / total
-        print max(prob.iteritems(), key=operator.itemgetter(1))[0], t[cols_count - 1]
+        #best match, actual class
+        if (max(prob.iteritems(), key=operator.itemgetter(1))[0] == t[cols_count - 1]):
+            count+=1
 
+    print 'Accuracy: %.04f' % (count/float(size))
+    
 if __name__ == "__main__":
-    main(int(argv[1]))
+    main(argv[1:])
+##    for i in range(int(argv[2])):
+##        main(argv[1:])
