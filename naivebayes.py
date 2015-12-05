@@ -105,6 +105,7 @@ def main(arg):
         total = sum(prob.values())
         for k in keys:
             prob[k] = prob[k] / total
+        # best match, actual class
         print max(prob.iteritems(), key=operator.itemgetter(1))[0], t[cols_count - 1]
 
 if __name__ == "__main__":
