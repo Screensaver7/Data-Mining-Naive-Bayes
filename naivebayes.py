@@ -19,6 +19,8 @@ def openCSV(filename, k):
     csvfile = open(filename,"r")
     reader = csv.reader(csvfile, delimiter=',', quotechar='|')
     line = list(reader)
+    #removes attrib names
+    del line[0]
     col_count = len(line[0])
     row_count = len(line)
     size = row_count
