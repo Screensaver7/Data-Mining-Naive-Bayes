@@ -4,7 +4,7 @@
 ## Input: # of folds
 ## Output: Classification errors
 ##
-## Example: python naivebayes.py dataset.csv 10
+## Example: python naivebayes.py dataset.csv 5
 
 import csv
 import math
@@ -54,7 +54,7 @@ def openCSV(filename, k):
     csvfile.close()
     #delete test data in training partition
     del kparts[test]
-    return kparts, testdata, row_count
+    return kparts, testdata
 
 def mean(listOfNum):
     if (len(listOfNum) == 0): return 0
@@ -62,18 +62,22 @@ def mean(listOfNum):
 
 def stddev(listOfNum):
     avg = mean(listOfNum)
-    return math.sqrt(sum([pow(x-avg,2) for x in listOfNum])/float(len(listOfNum)-1))
+    return math.sqrt(sum([pow(x-avg,2) for x in listOfNum])
+                     /float(len(listOfNum)-1))
 
 def gaussianPdf(avg, standDev ,x):
-    return (1/(standDev*math.sqrt(2*math.pi)))*math.pow(math.e,-1*math.pow((x-avg),2)/(2*standDev*standDev))
+    return (1/(standDev*math.sqrt(2*math.pi)))*\
+           math.pow(math.e,-1*\
+           math.pow((x-avg),2)/\
+           (2*standDev*standDev))
 
 def main(arg):
     seed(datetime.now())
     data = openCSV(arg[0], int(arg[1]))
     test = data[1]
-    size = data[2]
     data = data[0]
     cols_count = len(test[0])
+    rows_count = len(test)
     keys = data[0][0].keys()
     train = []
     for attribs in range(cols_count - 1):
@@ -85,13 +89,12 @@ def main(arg):
                 for array in parts[i][word]:
                     train[i][word].append(array)
     del data
-    #only keep mean and stddev
+    #calculate mean and stddev first
     for attrib in train:
         for key in keys:
             newval = [mean(attrib[key]), stddev(attrib[key])]
             attrib[key] = newval
     #test training
-    print train
     count = 0
     for t in test:
         prob = dict(zip(keys, [[] for x in range(len(keys))]))
@@ -107,13 +110,16 @@ def main(arg):
         total = sum(prob.values())
         for k in keys:
             prob[k] = prob[k] / total
-        #best match, actual class
-        if (max(prob.iteritems(), key=operator.itemgetter(1))[0] == t[cols_count - 1]):
-            count+=1
 
-    print 'Accuracy: %.04f' % (count/float(size))
-    
+        #best match, actual class
+        if (max(prob.iteritems(), key=operator.itemgetter(1))[0] ==
+            t[cols_count - 1]): count+=1
+    #accuracy for one run
+    return count/float(rows_count)
+
 if __name__ == "__main__":
-    main(argv[1:])
-##    for i in range(int(argv[2])):
-##        main(argv[1:])
+    results = []
+    for i in range(int(argv[2])):
+        print '%d...' % (i+1),
+        results.append(main(argv[1:]))
+    print '\nAccuracy: %.04f' % (sum(results)/float(len(results)))
